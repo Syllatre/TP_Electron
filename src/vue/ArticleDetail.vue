@@ -81,14 +81,6 @@
               <textarea v-model="editForm.desc" class="uk-textarea" rows="5" placeholder="Description" required></textarea>
             </div>
             <div class="uk-margin">
-              <label class="uk-form-label">Auteur</label>
-              <input v-model="editForm.author" class="uk-input" type="text" placeholder="Auteur" required>
-            </div>
-            <div class="uk-margin">
-              <label class="uk-form-label">URL de l'image</label>
-              <input v-model="editForm.imgPath" class="uk-input" type="url" placeholder="URL de l'image">
-            </div>
-            <div class="uk-margin">
               <button class="uk-button uk-button-primary uk-width-1-1" type="submit" :disabled="isUpdating">
                 <span v-if="isUpdating" uk-spinner="ratio: 0.5"></span>
                 {{ isUpdating ? 'Modification...' : 'Modifier l\'article' }}
@@ -213,12 +205,19 @@ async function updateArticle() {
   isUpdating.value = true
 
   try {
+    // Conserver l'URL de l'image et l'auteur originaux
+    const articleData = {
+      ...editForm.value,
+      imgPath: article.value.imgPath, // Utiliser l'URL originale
+      author: article.value.author     // Utiliser l'auteur original
+    }
+
     const response = await fetch(`${API_BASE}/articles/save`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify(editForm.value)
+      body: JSON.stringify(articleData)
     })
 
     const result = await response.json()
